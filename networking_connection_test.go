@@ -138,7 +138,7 @@ var _ = Describe("CF Networking Connection", func() {
 		})
 
 		Describe("Errors", func() {
-			PContext("when the server does not exist", func() {
+			Context("when the server does not exist", func() {
 				BeforeEach(func() {
 					connection = NewConnection(Config{})
 				})
