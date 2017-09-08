@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"code.cloudfoundry.org/cli/api/cfnetworking"
+	"code.cloudfoundry.org/cfnetworking-cli-api"
 )
 
 //go:generate counterfeiter . RequestLoggerOutput

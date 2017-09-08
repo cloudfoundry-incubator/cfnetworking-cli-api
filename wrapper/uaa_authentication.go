@@ -1,8 +1,8 @@
 package wrapper
 
 import (
-	"code.cloudfoundry.org/cli/api/cfnetworking"
-	"code.cloudfoundry.org/cli/api/cfnetworking/networkerror"
+	"code.cloudfoundry.org/cfnetworking-cli-api"
+	"code.cloudfoundry.org/cfnetworking-cli-api/networkerror"
 	"code.cloudfoundry.org/cli/api/uaa"
 )
 

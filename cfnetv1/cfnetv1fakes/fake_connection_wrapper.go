@@ -4,8 +4,8 @@ package cfnetv1fakes
 import (
 	"sync"
 
-	"code.cloudfoundry.org/cli/api/cfnetworking"
-	"code.cloudfoundry.org/cli/api/cfnetworking/cfnetv1"
+	"code.cloudfoundry.org/cfnetworking-cli-api"
+	"code.cloudfoundry.org/cfnetworking-cli-api/cfnetv1"
 )
 
 type FakeConnectionWrapper struct {
