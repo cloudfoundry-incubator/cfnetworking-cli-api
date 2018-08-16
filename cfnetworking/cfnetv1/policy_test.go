@@ -47,6 +47,41 @@ var _ = Describe("Policy", func() {
 								}
 							}
 						}
+					],
+					"egress_policies": [
+						{
+							"source": {
+								"id": "source-id-3"
+							},
+							"destination": {
+								"protocol": "udp",
+								"ips": [{
+									"start": "1.2.3.4",
+									"end": "1.2.3.5"
+								}],
+								"ports": [{
+									"start": 1234,
+									"end": 1235
+								}]
+							}
+						},
+						{
+							"source": {
+								"id": "source-id-4",
+								"type": "space"
+							},
+							"destination": {
+								"protocol": "udp",
+								"ips": [{
+									"start": "1.2.3.4",
+									"end": "1.2.3.5"
+								}],
+								"ports": [{
+									"start": 1234,
+									"end": 1235
+								}]
+							}
+						}
 					]
 				}`
 				server.AppendHandlers(
@@ -59,30 +94,75 @@ var _ = Describe("Policy", func() {
 			})
 
 			It("passes the body correctly", func() {
-				err := client.CreatePolicies([]Policy{
-					{
-						Source: PolicySource{
-							ID: "source-id-1",
+				err := client.CreatePolicies(PolicyList{
+					Policies: []Policy{
+						{
+							Source: PolicySource{
+								ID: "source-id-1",
+							},
+							Destination: PolicyDestination{
+								ID:       "destination-id-1",
+								Protocol: PolicyProtocolTCP,
+								Ports: Ports{
+									Start: 1234,
+									End:   1235,
+								},
+							},
 						},
-						Destination: PolicyDestination{
-							ID:       "destination-id-1",
-							Protocol: PolicyProtocolTCP,
-							Ports: Ports{
-								Start: 1234,
-								End:   1235,
+						{
+							Source: PolicySource{
+								ID: "source-id-2",
+							},
+							Destination: PolicyDestination{
+								ID:       "destination-id-2",
+								Protocol: PolicyProtocolUDP,
+								Ports: Ports{
+									Start: 1234,
+									End:   1235,
+								},
 							},
 						},
 					},
-					{
-						Source: PolicySource{
-							ID: "source-id-2",
+					EgressPolicies: []EgressPolicy{
+						{
+							Source: EgressPolicySource{
+								ID: "source-id-3",
+							},
+							Destination: EgressPolicyDestination{
+								Protocol: PolicyProtocolUDP,
+								IPs: []IP{
+									{
+										Start: "1.2.3.4",
+										End:   "1.2.3.5",
+									},
+								},
+								Ports: []Ports{
+									{
+										Start: 1234,
+										End:   1235,
+									},
+								},
+							},
 						},
-						Destination: PolicyDestination{
-							ID:       "destination-id-2",
-							Protocol: PolicyProtocolUDP,
-							Ports: Ports{
-								Start: 1234,
-								End:   1235,
+						{
+							Source: EgressPolicySource{
+								ID:   "source-id-4",
+								Type: "space",
+							},
+							Destination: EgressPolicyDestination{
+								Protocol: PolicyProtocolUDP,
+								IPs: []IP{
+									{
+										Start: "1.2.3.4",
+										End:   "1.2.3.5",
+									},
+								},
+								Ports: []Ports{
+									{
+										Start: 1234,
+										End:   1235,
+									},
+								},
 							},
 						},
 					},
@@ -106,7 +186,7 @@ var _ = Describe("Policy", func() {
 			})
 
 			It("returns the error and warnings", func() {
-				err := client.CreatePolicies(nil)
+				err := client.CreatePolicies(PolicyList{})
 				Expect(err).To(MatchError(networkerror.BadRequestError{
 					Message: "Oh Noes",
 				}))
@@ -115,7 +195,7 @@ var _ = Describe("Policy", func() {
 	})
 
 	Describe("ListPolicies", func() {
-		var expectedPolicies []Policy
+		var expectedPolicies PolicyList
 		Context("when the policies are found", func() {
 			BeforeEach(func() {
 				response := `{
@@ -146,6 +226,41 @@ var _ = Describe("Policy", func() {
 								}
 							}
 						}
+					],
+					"egress_policies": [
+						{
+							"source": {
+								"id": "source-id-3"
+							},
+							"destination": {
+								"protocol": "udp",
+								"ips": [{
+									"start": "1.2.3.4",
+									"end": "1.2.3.5"
+								}],
+								"ports": [{
+									"start": 1234,
+									"end": 1235
+								}]
+							}
+						},
+						{
+							"source": {
+								"id": "source-id-4",
+								"type": "space"
+							},
+							"destination": {
+								"protocol": "udp",
+								"ips": [{
+									"start": "1.2.3.4",
+									"end": "1.2.3.5"
+								}],
+								"ports": [{
+									"start": 1234,
+									"end": 1235
+								}]
+							}
+						}
 					]
 				}`
 				server.AppendHandlers(
@@ -154,30 +269,75 @@ var _ = Describe("Policy", func() {
 						RespondWith(http.StatusOK, response),
 					),
 				)
-				expectedPolicies = []Policy{
-					{
-						Source: PolicySource{
-							ID: "source-id-1",
+				expectedPolicies = PolicyList{
+					Policies: []Policy{
+						{
+							Source: PolicySource{
+								ID: "source-id-1",
+							},
+							Destination: PolicyDestination{
+								ID:       "destination-id-1",
+								Protocol: "tcp",
+								Ports: Ports{
+									Start: 1234,
+									End:   1235,
+								},
+							},
 						},
-						Destination: PolicyDestination{
-							ID:       "destination-id-1",
-							Protocol: "tcp",
-							Ports: Ports{
-								Start: 1234,
-								End:   1235,
+						{
+							Source: PolicySource{
+								ID: "source-id-2",
+							},
+							Destination: PolicyDestination{
+								ID:       "destination-id-2",
+								Protocol: "tcp",
+								Ports: Ports{
+									Start: 4321,
+									End:   5321,
+								},
 							},
 						},
 					},
-					{
-						Source: PolicySource{
-							ID: "source-id-2",
+					EgressPolicies: []EgressPolicy{
+						{
+							Source: EgressPolicySource{
+								ID: "source-id-3",
+							},
+							Destination: EgressPolicyDestination{
+								Protocol: PolicyProtocolUDP,
+								IPs: []IP{
+									{
+										Start: "1.2.3.4",
+										End:   "1.2.3.5",
+									},
+								},
+								Ports: []Ports{
+									{
+										Start: 1234,
+										End:   1235,
+									},
+								},
+							},
 						},
-						Destination: PolicyDestination{
-							ID:       "destination-id-2",
-							Protocol: "tcp",
-							Ports: Ports{
-								Start: 4321,
-								End:   5321,
+						{
+							Source: EgressPolicySource{
+								ID:   "source-id-4",
+								Type: "space",
+							},
+							Destination: EgressPolicyDestination{
+								Protocol: PolicyProtocolUDP,
+								IPs: []IP{
+									{
+										Start: "1.2.3.4",
+										End:   "1.2.3.5",
+									},
+								},
+								Ports: []Ports{
+									{
+										Start: 1234,
+										End:   1235,
+									},
+								},
 							},
 						},
 					},
